@@ -1,0 +1,15 @@
+{
+  "name": "home-server",
+  "version": "0.1.0",
+  "description": "MY private home server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "parse-rss": "^1.0.3",
+    "webdriver-sync": "^0.18.0"
+  }
+}
