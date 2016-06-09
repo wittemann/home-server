@@ -1,10 +1,15 @@
 console.log('HOME server started');
 
-var scene = require('./scene.js');
+var everhome = require('./everhome.js');
 var ifttt = require('./ifttt.js');
+var wd = require('webdriver-sync');
 
 // ifttt(function(items) {
 //   console.log('ITEMS:', items, items.length);
 // });
 
-scene('TV Schauen');
+// while (true) {
+//   wd.sleep(10000);
+// }
+
+everhome.device('Stehlampe');
