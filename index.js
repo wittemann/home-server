@@ -6,8 +6,6 @@ var wd = require('webdriver-sync');
 
 const isDay = require('./day.js');
 
-console.log(isDay(-7));
-
 
 // while (true) {
 //   wd.sleep(10000);
