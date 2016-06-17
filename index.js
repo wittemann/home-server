@@ -1,11 +1,14 @@
 console.log('HOME server started');
 
 var everhome = require('./everhome.js');
-var ifttt = require('./ifttt.js');
+var dropbox = require('./dropbox.js');
 var wd = require('webdriver-sync');
 
 const isDay = require('./day.js');
 
+dropbox.check(function(msg) {
+  console.log(msg);
+});
 
 // while (true) {
 //   wd.sleep(10000);

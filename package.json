@@ -9,8 +9,11 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "parse-rss": "^1.0.3",
     "suncalc": "^1.7.0",
     "webdriver-sync": "^0.18.0"
+  },
+  "dependencies": {
+    "dropbox": "^2.0.0",
+    "node-dropbox": "^0.1.7"
   }
 }
