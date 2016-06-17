@@ -13,7 +13,6 @@
     "webdriver-sync": "^0.18.0"
   },
   "dependencies": {
-    "dropbox": "^2.0.0",
     "node-dropbox": "^0.1.7"
   }
 }
