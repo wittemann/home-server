@@ -1,6 +1,3 @@
-var dropbox = require('./dropbox.js');
-var config = require('./config');
-
 const move = require('./action/move.js');
 
 
