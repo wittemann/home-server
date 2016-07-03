@@ -8,12 +8,10 @@
   },
   "author": "",
   "license": "MIT",
-  "devDependencies": {
-    "suncalc": "^1.7.0",
-    "webdriver-sync": "^0.18.0"
-  },
+  "devDependencies": {},
   "dependencies": {
     "node-dropbox": "^0.1.7",
-    "phantomjs-prebuilt": "^2.1.7"
+    "node-xhr": "^1.0.5",
+    "suncalc": "^1.7.0"
   }
 }

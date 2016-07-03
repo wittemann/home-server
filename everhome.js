@@ -1,65 +1,81 @@
-var config = require('./config');
+var xhr = require('node-xhr');
 var user = require('./user');
-var wd = require('webdriver-sync');
 
-var login = function() {
-  var ChromeDriver = wd.ChromeDriver;
-  var driver = new ChromeDriver();
-  // var PhantomJSDriver = wd.PhantomJSDriver;
-  // var driver = new PhantomJSDriver();
-
-  driver.get(config.URL);
-
-  // click the 'Anmelden' button
-  driver.findElement(wd.By.cssSelector('.mdl-layout__drawer-button')).click();
-  wd.sleep(500);
-  driver.findElement(wd.By.cssSelector('#header-login-button')).click();
-  driver.findElement(wd.By.cssSelector('.mdl-layout__obfuscator')).click();
-
-  wd.sleep(500);
-
-  driver.findElement(wd.By.cssSelector('#email')).sendKeys(user.name);
-  driver.findElement(wd.By.cssSelector('#pw')).sendKeys(user.password);
-  driver.findElement(wd.By.cssSelector('button[type=submit]')).click();
-
-  wd.wait(function() {
-    return driver.findElements(wd.By.cssSelector('div.cloudboxStatus')).length > 0;
-  }, { timeout: 3000, period: 100 });
-
-  return driver;
+var deviceIds = {
+  "Beregner": 46,
+  "Stehlampe": 16
+};
+var sceneIds = {
+  "Alles aus": 2,
+  "Ins Bett gehen": 4,
+  "Rasen gießen": 7,
+  "TV schauen": 5
 };
 
-var logout = function(driver) {
-  wd.sleep(1000);
-  driver.get('https://everhome.de/api/user/logout');
 
-  driver.quit();
+var login = function(user, pwd, clb) {
+  var data = "email=" + encodeURIComponent(user) + "&pw=" + encodeURIComponent(pwd);
+  req('api/user/login', data, function(res) {
+    if (res.body === 'ok') {
+      var token = res.headers['set-cookie'][0];
+      token = token.split(';')[0].split('=')[1];
+
+      clb(token);
+    }
+  });
+};
+
+var device = function(token, id, action) {
+  var data = "t=" + token + "&d=" + id + "&a=" + action;
+  req('hub', data, function(res) {
+    if (res.body === 'ok') {
+      console.log(new Date() + '', ': Device "' + id + '" switched to ' + action);
+    } else {
+      console.log(new Date() + '', ': Could not trigger device' + id);
+    }
+  });
+};
+
+var scene = function(token, id) {
+  var data = "t=" + token + "&s=" + id;
+  req('hub', data, function(res) {
+    if (res.body === 'ok') {
+      console.log(new Date() + '', ': Scene "' + id + '" triggered');
+    } else {
+      console.log(new Date() + '', ': Could not trigger scene ' + id);
+    }
+  });
+};
+
+var req = function(endpoint, body, clb) {
+  xhr.post({
+    url : 'https://everhome.de/' + endpoint,
+    headers : {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    },
+    body : body
+  }, function(err, res) {
+    if (err) {
+        console.log(err.message);
+        return;
+    }
+
+    clb(res);
+  });
 }
 
-var device = function(name) {
-  const driver = login(driver);
 
-  driver.findElement(wd.By.cssSelector('a[href="/dashboard/devices"')).click();
-  driver.findElement(wd.By.cssSelector('button[devicename="' + name + '"].btn-primary')).click();
-
-  console.log(new Date() + '', ': Device "' + name + '" triggered');
-
-  logout(driver);
-};
-
-var scene = function(name) {
-  const driver = login(driver);
-
-  driver.findElement(wd.By.cssSelector('a[href="/dashboard/scenes"')).click();
-  driver.findElement(wd.By.cssSelector('button[scenename="' + name + '"]')).click();
-
-  console.log(new Date() + '', ': Scene "' + name + '" triggered');
-
-  logout(driver);
-};
 
 
 module.exports = {
-  scene: scene,
-  device: device
+  device: function(name, action) {
+    login(user.name, user.password, function(token) {
+      device(token, deviceIds[name], action);
+    });
+  },
+  scene: function(name) {
+    login(user.name, user.password, function(token) {
+      scene(token, sceneIds[name]);
+    });
+  }
 }
