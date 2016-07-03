@@ -2,14 +2,14 @@ var xhr = require('node-xhr');
 var user = require('./user');
 
 var deviceIds = {
-  "Beregner": 46,
-  "Stehlampe": 16
+  "beregner": 46,
+  "stehlampe": 16
 };
 var sceneIds = {
-  "Alles aus": 2,
-  "Ins Bett gehen": 4,
-  "Rasen gießen": 7,
-  "TV schauen": 5
+  "alles aus": 2,
+  "ins bett gehen": 4,
+  "rasen gießen": 7,
+  "tv schauen": 5
 };
 
 
@@ -70,12 +70,12 @@ var req = function(endpoint, body, clb) {
 module.exports = {
   device: function(name, action) {
     login(user.name, user.password, function(token) {
-      device(token, deviceIds[name], action);
+      device(token, deviceIds[name.toLowerCase()], action);
     });
   },
   scene: function(name) {
     login(user.name, user.password, function(token) {
-      scene(token, sceneIds[name]);
+      scene(token, sceneIds[name.toLowerCase()]);
     });
   }
 }

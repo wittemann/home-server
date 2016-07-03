@@ -5,6 +5,7 @@ var everhome = require('../everhome.js');
 var id = null;
 
 module.exports = function() {
+  console.log('Move processed');
   if (!isDay()) {
     if (id) {
       console.log("Clear 'Move' timeout");
