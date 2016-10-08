@@ -1,6 +1,6 @@
-var everhome = require('../everhome.js');
+const everhome = require('../everhome.js');
 
-module.exports = function(on) {
+module.exports = (on) => {
   if (on) {
     everhome.scene('tv schauen');
   } else {

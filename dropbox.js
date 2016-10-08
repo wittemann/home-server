@@ -1,20 +1,19 @@
-var DROPBOX_PATH = '/home-server';
+const DROPBOX_PATH = '/home-server';
 
-var user = require('./user');
-var node_dropbox = require('node-dropbox');
+const user = require('./user');
+const nodeDropbox = require('node-dropbox');
 
-
-exports.check = function(clb) {
-  var api = node_dropbox.api(user.dropbox);
-  api.getMetadata(DROPBOX_PATH, function(err, res, body) {
-  	var files = body.contents;
-    files.forEach(function(file) {
-      api.getFile(file.path, function(err, res, body) {
+exports.check = (clb) => {
+  const api = nodeDropbox.api(user.dropbox);
+  api.getMetadata(DROPBOX_PATH, (err, res, body) => {
+    const files = body.contents;
+    files.forEach((file) => {
+      api.getFile(file.path, (err, res, body) => {
         clb(body);
-        api.removeFile(file.path, function(err, res, body) {
+        api.removeFile(file.path, () => {
           // ignore
         });
       });
     });
   });
-}
+};

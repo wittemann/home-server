@@ -2,5 +2,5 @@
 module.exports = {
   name: 'everhome user name',
   password: 'everhome password',
-  dropbox: 'dropbox access token'
+  dropbox: 'dropbox access token',
 };

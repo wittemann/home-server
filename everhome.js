@@ -1,23 +1,41 @@
-var xhr = require('node-xhr');
-var user = require('./user');
+const xhr = require('node-xhr');
+const user = require('./user');
 
-var deviceIds = {
-  "beregner": 46,
-  "stehlampe": 16
+const deviceIds = {
+  beregner: 46,
+  stehlampe: 16,
 };
-var sceneIds = {
-  "alles aus": 2,
-  "ins bett gehen": 4,
-  "rasen gießen": 7,
-  "tv schauen": 5
+const sceneIds = {
+  'alles aus': 2,
+  'ins bett gehen': 4,
+  'rasen gießen': 7,
+  'tv schauen': 13,
 };
 
 
-var login = function(user, pwd, clb) {
-  var data = "email=" + encodeURIComponent(user) + "&pw=" + encodeURIComponent(pwd);
-  req('api/user/login', data, function(res) {
+const req = function (endpoint, body, clb) {
+  xhr.post({
+    url: `https://eta.everhome.de/${endpoint}`,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+    body,
+  }, (err, res) => {
+    if (err) {
+      console.log(err.message);
+      return;
+    }
+
+    clb(res);
+  });
+};
+
+
+const login = (user, pwd, clb) => {
+  const data = `email=${encodeURIComponent(user)}&pw=${encodeURIComponent(pwd)}`;
+  req('api/user/login', data, (res) => {
     if (res.body === 'ok') {
-      var token = res.headers['set-cookie'][0];
+      let token = res.headers['set-cookie'][0];
       token = token.split(';')[0].split('=')[1];
 
       clb(token);
@@ -25,9 +43,9 @@ var login = function(user, pwd, clb) {
   });
 };
 
-var device = function(token, id, action) {
-  var data = "t=" + token + "&d=" + id + "&a=" + action;
-  req('hub', data, function(res) {
+const device = function (token, id, action) {
+  const data = `t=${token}&d=${id}&a=${action}`;
+  req('hub', data, function (res) {
     if (res.body === 'ok') {
       console.log(new Date() + '', ': Device "' + id + '" switched to ' + action);
     } else {
@@ -36,9 +54,9 @@ var device = function(token, id, action) {
   });
 };
 
-var scene = function(token, id) {
-  var data = "t=" + token + "&s=" + id;
-  req('hub', data, function(res) {
+const scene = function (token, id) {
+  const data = `t=${token}&s=${id}`;
+  req('hub', data, (res) => {
     if (res.body === 'ok') {
       console.log(new Date() + '', ': Scene "' + id + '" triggered');
     } else {
@@ -47,35 +65,15 @@ var scene = function(token, id) {
   });
 };
 
-var req = function(endpoint, body, clb) {
-  xhr.post({
-    url : 'https://everhome.de/' + endpoint,
-    headers : {
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    },
-    body : body
-  }, function(err, res) {
-    if (err) {
-        console.log(err.message);
-        return;
-    }
-
-    clb(res);
-  });
-}
-
-
-
-
 module.exports = {
-  device: function(name, action) {
-    login(user.name, user.password, function(token) {
+  device: (name, action) => {
+    login(user.name, user.password, (token) => {
       device(token, deviceIds[name.toLowerCase()], action);
     });
   },
-  scene: function(name) {
-    login(user.name, user.password, function(token) {
+  scene: (name) => {
+    login(user.name, user.password, (token) => {
       scene(token, sceneIds[name.toLowerCase()]);
     });
-  }
-}
+  },
+};

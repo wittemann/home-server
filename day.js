@@ -7,8 +7,8 @@ const longitude = 8.72;
  * @param {Number} The minutes the day will be shortend
  * @return {Boolean} true, if it's still day
  */
-module.exports = function(diff) {
-  diff = diff || 0; // normalize
+module.exports = (diff) => {
+  diff = diff || 0; // normalize
   diff *= 1000 * 60; // minutes
 
   const d = new Date();
@@ -17,4 +17,4 @@ module.exports = function(diff) {
 
   return (now - diff) > sun.sunrise.getTime() &&
     (now + diff) < sun.sunset.getTime();
-}
+};

@@ -3,6 +3,8 @@ const everhome = require('./everhome.js');
 
 const move = require('./action/move.js');
 
+console.log('Server started...');
+
 dropbox.check((msg) => {
   if (msg.type === 'move') {
     move(msg.data);
